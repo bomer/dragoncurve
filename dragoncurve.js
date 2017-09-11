@@ -1,6 +1,6 @@
 var peak = true;
 var valley = false;
-var length = 5*window.devicePixelRatio;
+var length = 1*window.devicePixelRatio;
 
 // var canvas = document.getElementById("canvas");
 var height = window.innerHeight * window.devicePixelRatio;
@@ -18,9 +18,14 @@ Array.prototype.insert = function(index, item) {
 };
 
 var harry = [valley];
+var lastDraw;
+var lastFold;
 
-function Draw(arr,begindir) {
+function Draw(arr,begindir) {  
 	// Getting
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  var t0 = performance.now();
+  
   var pos = {x:width/2, y:height/2};
   var direction = begindir;
   
@@ -30,20 +35,20 @@ function Draw(arr,begindir) {
   
   for (var i = 0; i < arr.length; i++) {
 	  // getting
-  	if (arr[i]) {
-    	direction++;
-    } else {
-      direction--;
-    }
-    
+   if (arr[i]) {
+     direction++;
+   } else {
+    direction--;
+  }
+
     // wrapping around
     if (direction>4) {
-	    direction=1;
-    }
-    if (direction<1) {
-	    direction=4;
-    }
-    
+     direction=1;
+   }
+   if (direction<1) {
+     direction=4;
+   }
+
     // Drawing
     if (direction==1) { // up
     	pos.y+=length;
@@ -59,14 +64,16 @@ function Draw(arr,begindir) {
     }
     
     ctx.lineTo(pos.x, pos.y);
-	  ctx.stroke();
-
-
   }
+  ctx.stroke();
 // Drawing
+var t1 = performance.now();
+lastDraw = ("Draw: " + (t1 - t0).toFixed(2) + " milliseconds.");
 }
 
 function Fold(arr) {
+  var t0 = performance.now();
+
   for (var i = 0; i < arr.length; i++) {
     if (i % 2 == 0) { //0 based odd
       arr.insert(i, valley);
@@ -74,28 +81,40 @@ function Fold(arr) {
       i += 2;
     }
   }
+
+  var t1 = performance.now();
+  lastFold = ("Fold: " + (t1 - t0).toFixed(2) + " milliseconds.");
 }
 
-function start(){
-  var it = iterations.value;
-  (function myLoop (i) {          
-   setTimeout(function () {   
-     Fold(harry);
-     Draw(harry,1);
-    // Draw(harry,2);
-    // Draw(harry,3);
-    // Draw(harry,4);
-    if (--i){ 
-      myLoop(i);
-      }      //  decrement i and call myLoop again if i > 0
-    }, 500)
- })(it);  
+function asyncFold(iteration){
+  var promise = new Promise(function(resolve, reject) {
+    console.log("Harry is " + harry.length + " years old" );
+    Fold(harry);
+    Draw(harry,1);
+    debug.innerHTML = "LastFold: " + lastFold + "   LastDraw : " +lastDraw;
+    resolve("Stuff worked!");    
+  });
+  return promise;
 }
 
-// Draw(harry,1);;
+function start(val){  
+
+  if(val == null || val == undefined)
+   it = iterations.value;
+
+ asyncFold(it).then(function(result) {     
+  console.log(result);
+  it--;
+  console.log("it is at " + it);
+  if(it>0)
+    start(it);
+}, function(err) {
+
+  console.log(err); 
+});
+
+
+
+}
+
 ctx.strokeStyle="#FF0000";
-//Draw(harry,3);
-//ctx.strokeStyle="#0000FF";
-//Draw(harry,2);
-//ctx.strokeStyle="#00FF00";
-//Draw(harry,4);
