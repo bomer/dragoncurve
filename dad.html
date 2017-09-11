@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>	
+	<style>
+		body{
+			margin:0;
+			font-size:large;
+		}
+		#ui{
+			position: fixed;
+			left:0;
+			top:0;
+		}
+		button{
+			padding: 10px;
+			font-size: medium;
+		}
+	</style>
+	<title>Dragon Curve</title>
+</head>
+
+
+<body>
+	<div id="ui">
+		DATA<br>
+		<textarea id="textarea"></textarea>
+		<br>
+		Scale<input id="scale" value="3">
+		<button onclick="start()"> GO </button>
+		<p id='debug'>Last Fold: - LastDraw: - </p>
+		
+	</div>
+	<canvas id="canvas" width="500px" height="500px">
+	</canvas>	
+</body>
+
+<footer> 
+<script type="text/javascript" >
+	
+var peak = true;
+var valley = false;
+var length = 3*window.devicePixelRatio;
+
+// var canvas = document.getElementById("canvas");
+var height = window.innerHeight * window.devicePixelRatio;
+var width=window.innerWidth * window.devicePixelRatio;
+
+canvas.width=width;
+canvas.height=height;
+canvas.style.width = window.innerWidth + "px";
+canvas.style.height = window.innerHeight + "px";
+
+ctx = canvas.getContext("2d");
+
+Array.prototype.insert = function(index, item) {
+  this.splice(index, 0, item);
+};
+
+var harry = [valley];
+var lastDraw;
+var lastFold;
+
+function Draw(arr,begindir) {  
+	// Getting
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  var t0 = performance.now();
+  if(scale.value)
+    length = scale.value*window.devicePixelRatio;
+  var pos = {x:width/2, y:height/2};
+  var direction = begindir;
+  
+
+  ctx.beginPath();
+  ctx.moveTo(pos.x, pos.y);
+  
+  for (var i = 0; i < arr.length; i++) {
+  	//console.log("Drawing " + arr[i] + " at scale " + length + " at "  + pos.x + " " + pos.y);
+
+    // Drawing
+    if (arr[i]=="N") { // up
+    	pos.y+=length;
+    }
+    if (arr[i]=="E") { // right
+    	pos.x+=length;
+    }
+    if (arr[i]=="S") { // down
+    	pos.y-=length;
+    }
+    if (arr[i]=="W") { // left
+    	pos.x-=length;
+    }
+    
+    ctx.lineTo(pos.x, pos.y);
+
+  }
+  ctx.stroke();
+// Drawing
+var t1 = performance.now();
+lastDraw = ("Draw: " + (t1 - t0).toFixed(2) + " milliseconds.");
+}
+
+function start(){
+	Draw(textarea.value,1);
+}
+
+
+
+</script>
+</footer>
+</html>
+
