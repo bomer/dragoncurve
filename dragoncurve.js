@@ -73,14 +73,21 @@ lastDraw = ("Draw: " + (t1 - t0).toFixed(2) + " milliseconds.");
 
 function Fold(arr) {
   var t0 = performance.now();
-
+  var newArray = [];
+  var index=0;
+  //Based on a new forumla, goes straight into new array, every even number adds a Valley plus peak before
+  //and the odd based ones remain as they are (the previous folds). untouched.
   for (var i = 0; i < arr.length; i++) {
     if (i % 2 == 0) { //0 based odd
-      arr.insert(i, valley);
-      arr.insert(i + 2, peak);
-      i += 2;
+      newArray[index+1]=arr[i];
+      newArray[index]=valley;
+      newArray[index+2]=peak;
+      index+=3;      
+    }else{
+      newArray[index++]=arr[i];
     }
   }
+  harry=newArray;
 
   var t1 = performance.now();
   lastFold = ("Fold: " + (t1 - t0).toFixed(2) + " milliseconds.");
