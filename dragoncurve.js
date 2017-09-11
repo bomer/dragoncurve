@@ -1,6 +1,6 @@
 var peak = true;
 var valley = false;
-var length = 1*window.devicePixelRatio;
+var length = 3*window.devicePixelRatio;
 
 // var canvas = document.getElementById("canvas");
 var height = window.innerHeight * window.devicePixelRatio;
@@ -25,7 +25,8 @@ function Draw(arr,begindir) {
 	// Getting
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   var t0 = performance.now();
-  
+  if(scale.value)
+    length = scale.value*window.devicePixelRatio;
   var pos = {x:width/2, y:height/2};
   var direction = begindir;
   
